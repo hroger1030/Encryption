@@ -28,12 +28,8 @@ namespace Encryption
     public sealed class CryptoRng : ICryptoRng, IDisposable
     {
         private RNGCryptoServiceProvider _Random = new RNGCryptoServiceProvider();
-        private int _PasswordLength;
 
-        public CryptoRng(int password_length)
-        {
-            _PasswordLength = password_length;
-        }
+        public CryptoRng() { }
 
         public Guid GenerateGuid()
         {
@@ -129,12 +125,24 @@ namespace Encryption
             return (buffer % offset) + min_value;
         }
 
-        public string GeneratePassword()
+        public string GeneratePassword(int length)
         {
-            byte[] buffer = new byte[_PasswordLength];
+            byte[] buffer = new byte[length];
             _Random.GetBytes(buffer);
 
             return Convert.ToBase64String(buffer);
+        }
+
+        public string GeneratePassword(string alphabet, int length)
+        {
+            var buffer = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                buffer[i] = alphabet[GenerateInt(0, alphabet.Length)];
+            }
+
+            return buffer.ToString();
         }
 
         public void Dispose()
