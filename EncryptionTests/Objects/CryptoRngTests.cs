@@ -1,36 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Encryption;
+using NUnit.Framework;
 
 namespace EncryptionUnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class CryptoRngTests
     {
         private static uint _MaxValue = 201;
         private static int _Trials = 10000;
         private static int _PasswordLength = 16;
 
-        [TestMethod]
-        [TestCategory("CryptoRng")]
+        [Test]
+        [Category("CryptoRng")]
         public void TestRandomString()
         {
             CryptoRng random = new CryptoRng(_PasswordLength);
             string output = random.GeneratePassword();
 
             Console.WriteLine(output);
-
-
             Assert.IsTrue(output.Length > 16);
-  
         }
 
-
-
-        [TestMethod]
-        [TestCategory("CryptoRng")]
+        [Test]
+        [Category("CryptoRng")]
         public void TestValueDistrabution()
         {
             CryptoRng random = new CryptoRng(_PasswordLength);
@@ -38,7 +33,7 @@ namespace EncryptionUnitTests
             // framework to test generation methods.
             // any methods exposed should produce normal distabutions...
 
-            var test = new Dictionary<uint,int>();
+            var test = new Dictionary<uint, int>();
 
             for (int i = 0; i < _Trials; i++)
             {

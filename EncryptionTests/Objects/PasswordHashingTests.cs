@@ -1,18 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using Encryption;
+﻿using Encryption;
+using NUnit.Framework;
 
 namespace EncryptionUnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class PasswordHashingTests
     {
-        private static string password1     = "12345";
-        private static string password2     = "象形字象形字象形字";
-        private static int iterations       = 64;
+        private static string password1 = "12345";
+        private static string password2 = "象形字象形字象形字";
+        private static int iterations = 64;
 
-        [TestMethod]
-        [TestCategory("PasswordHashing")]
+        [Test]
+        [Category("PasswordHashing")]
         public void TestHashComparison()
         {
             var encryptor = new PasswordHasher(iterations);
@@ -21,8 +20,8 @@ namespace EncryptionUnitTests
             Assert.IsTrue(encryptor.Verify(password1, hash));
         }
 
-        [TestMethod]
-        [TestCategory("PasswordHashing")]
+        [Test]
+        [Category("PasswordHashing")]
         public void TestHashComparisonWithUnicode()
         {
             var encryptor = new PasswordHasher(iterations);
@@ -31,8 +30,8 @@ namespace EncryptionUnitTests
             Assert.IsTrue(encryptor.Verify(password2, hash));
         }
 
-        [TestMethod]
-        [TestCategory("PasswordHashing")]
+        [Test]
+        [Category("PasswordHashing")]
         public void VerifySuccessiveHashesDiffer()
         {
             var encryptor = new PasswordHasher(iterations);
@@ -43,8 +42,8 @@ namespace EncryptionUnitTests
             Assert.IsTrue(hash1 != hash2);
         }
 
-        [TestMethod]
-        [TestCategory("PasswordHashing")]
+        [Test]
+        [Category("PasswordHashing")]
         public void TestCaseSensitivity()
         {
             var password_hasher = new PasswordHasher(4);
