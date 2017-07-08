@@ -17,8 +17,8 @@ namespace EncryptionUnitTests
         [Category("CryptoRng")]
         public void TestRandomString()
         {
-            CryptoRng random = new CryptoRng(_PasswordLength);
-            string output = random.GeneratePassword();
+            CryptoRng random = new CryptoRng();
+            string output = random.GeneratePassword(_PasswordLength);
 
             Console.WriteLine(output);
             Assert.IsTrue(output.Length > 16);
@@ -28,7 +28,7 @@ namespace EncryptionUnitTests
         [Category("CryptoRng")]
         public void TestValueDistrabution()
         {
-            CryptoRng random = new CryptoRng(_PasswordLength);
+            CryptoRng random = new CryptoRng();
 
             // framework to test generation methods.
             // any methods exposed should produce normal distabutions...
