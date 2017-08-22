@@ -13,12 +13,13 @@ namespace EncryptionUnitTests
         private static int _Trials = 10000;
         private static int _PasswordLength = 16;
 
+        CryptoRng _Rand = new CryptoRng();
+
         [Test]
         [Category("CryptoRng")]
         public void TestRandomString()
         {
-            CryptoRng random = new CryptoRng();
-            string output = random.GeneratePassword(_PasswordLength);
+            string output = _Rand.GeneratePassword(_PasswordLength);
 
             Console.WriteLine(output);
             Assert.IsTrue(output.Length > 16);
@@ -26,10 +27,19 @@ namespace EncryptionUnitTests
 
         [Test]
         [Category("CryptoRng")]
+        public void TestRandomInt()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var output = _Rand.GenerateInt(1,10);
+                Assert.IsTrue(output >= 1 && output <= 10, $"Random number '{output}' is out of range");
+            }
+        }
+
+        [Test]
+        [Category("CryptoRng")]
         public void TestValueDistrabution()
         {
-            CryptoRng random = new CryptoRng();
-
             // framework to test generation methods.
             // any methods exposed should produce normal distabutions...
 
@@ -37,7 +47,7 @@ namespace EncryptionUnitTests
 
             for (int i = 0; i < _Trials; i++)
             {
-                var buffer = random.GenerateUint(0, _MaxValue);
+                var buffer = _Rand.GenerateUint(0, _MaxValue);
 
                 if (!test.ContainsKey(buffer))
                     test.Add(buffer, 0);

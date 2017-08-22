@@ -28,6 +28,7 @@ namespace Encryption
         int GenerateInt();
         int GenerateInt(int max_value);
         int GenerateInt(int min_value, int max_value);
+        ulong GenerateUlong();
         string GeneratePassword(int length);
         uint GenerateUint();
         uint GenerateUint(uint max_value);
