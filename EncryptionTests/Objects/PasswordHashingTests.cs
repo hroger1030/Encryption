@@ -9,35 +9,39 @@ namespace EncryptionUnitTests
         private static string password1 = "12345";
         private static string password2 = "象形字象形字象形字";
         private static int iterations = 64;
+        private static int hash_size = 128;
+        private static int salt_size = 64;
+
+        PasswordHasher _DefaultHasher;
+
+        [OneTimeSetUp]
+        public void Init()
+        {
+            _DefaultHasher = new PasswordHasher(hash_size, salt_size, iterations);
+        }
 
         [Test]
         [Category("PasswordHashing")]
         public void TestHashComparison()
         {
-            var encryptor = new PasswordHasher(iterations);
-
-            string hash = encryptor.GenerateHash(password1);
-            Assert.IsTrue(encryptor.Verify(password1, hash));
+            string hash = _DefaultHasher.GenerateHash(password1);
+            Assert.IsTrue(_DefaultHasher.Verify(password1, hash));
         }
 
         [Test]
         [Category("PasswordHashing")]
         public void TestHashComparisonWithUnicode()
         {
-            var encryptor = new PasswordHasher(iterations);
-
-            string hash = encryptor.GenerateHash(password2);
-            Assert.IsTrue(encryptor.Verify(password2, hash));
+            string hash = _DefaultHasher.GenerateHash(password2);
+            Assert.IsTrue(_DefaultHasher.Verify(password2, hash));
         }
 
         [Test]
         [Category("PasswordHashing")]
         public void VerifySuccessiveHashesDiffer()
         {
-            var encryptor = new PasswordHasher(iterations);
-
-            string hash1 = encryptor.GenerateHash(password1);
-            string hash2 = encryptor.GenerateHash(password1);
+            string hash1 = _DefaultHasher.GenerateHash(password1);
+            string hash2 = _DefaultHasher.GenerateHash(password1);
 
             Assert.IsTrue(hash1 != hash2);
         }
@@ -46,10 +50,8 @@ namespace EncryptionUnitTests
         [Category("PasswordHashing")]
         public void TestCaseSensitivity()
         {
-            var password_hasher = new PasswordHasher(4);
-
-            string buffer = password_hasher.GenerateHash("Foo");
-            bool results = password_hasher.Verify("foo", buffer);
+            string buffer = _DefaultHasher.GenerateHash("Foo");
+            bool results = _DefaultHasher.Verify("foo", buffer);
 
             Assert.IsFalse(results, "Hashes should not match");
         }
