@@ -27,7 +27,7 @@ namespace Encryption
     /// </summary>
     public sealed class CryptoRng : ICryptoRng, IDisposable
     {
-        private RNGCryptoServiceProvider _Random = new RNGCryptoServiceProvider();
+        private readonly RNGCryptoServiceProvider _Random = new RNGCryptoServiceProvider();
 
         public CryptoRng() { }
 
@@ -71,24 +71,24 @@ namespace Encryption
             return buffer;
         }
 
-        public int GenerateInt(int max_value)
+        public int GenerateInt(int maxValue)
         {
-            return GenerateInt(0, max_value);
+            return GenerateInt(0, maxValue);
         }
 
         /// <summary>
         /// Generates a random number between min and max, inclusive.
         /// </summary>
-        public int GenerateInt(int min_value, int max_value)
+        public int GenerateInt(int minValue, int maxValue)
         {
-            if (min_value > max_value)
+            if (minValue > maxValue)
             {
-                min_value = min_value ^ max_value;
-                max_value = min_value ^ max_value;
-                min_value = min_value ^ max_value;
+                minValue ^= maxValue;
+                maxValue = minValue ^ maxValue;
+                minValue ^= maxValue;
             }
 
-            max_value++;
+            maxValue++;
 
             byte[] random_number = new byte[4];
             _Random.GetBytes(random_number);
@@ -96,34 +96,34 @@ namespace Encryption
             uint scale = BitConverter.ToUInt32(random_number, 0);
 
             // And use that to pick a random number >= min and < max
-            return (int)(min_value + (max_value - min_value) * (scale / (uint.MaxValue + 1.0)));
+            return (int)(minValue + (maxValue - minValue) * (scale / (uint.MaxValue + 1.0)));
         }
 
-        public uint GenerateUint(uint max_value)
+        public uint GenerateUint(uint maxValue)
         {
-            return GenerateUint(0, max_value);
+            return GenerateUint(0, maxValue);
         }
 
-        public uint GenerateUint(uint min_value, uint max_value)
+        public uint GenerateUint(uint minValue, uint maxValue)
         {
             // add one to max to include the max value endpoint.
-            max_value++;
+            maxValue++;
 
-            if (min_value > max_value)
+            if (minValue > maxValue)
             {
-                min_value = min_value ^ max_value;
-                max_value = min_value ^ max_value;
-                min_value = min_value ^ max_value;
+                minValue ^= maxValue;
+                maxValue = minValue ^ maxValue;
+                minValue ^= maxValue;
             }
 
-            uint offset = max_value - min_value;
+            uint offset = maxValue - minValue;
 
             byte[] random_number = new byte[4];
             _Random.GetBytes(random_number);
 
             uint buffer = BitConverter.ToUInt32(random_number, 0);
 
-            return (buffer % offset) + min_value;
+            return (buffer % offset) + minValue;
         }
 
         public ulong GenerateUlong()

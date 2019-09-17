@@ -26,12 +26,12 @@ namespace Encryption
         double GenerateDouble();
         Guid GenerateGuid();
         int GenerateInt();
-        int GenerateInt(int max_value);
-        int GenerateInt(int min_value, int max_value);
+        int GenerateInt(int maxValue);
+        int GenerateInt(int minValue, int maxValue);
         ulong GenerateUlong();
         string GeneratePassword(int length);
         uint GenerateUint();
-        uint GenerateUint(uint max_value);
-        uint GenerateUint(uint min_value, uint max_value);
+        uint GenerateUint(uint maxValue);
+        uint GenerateUint(uint minValue, uint maxValue);
     }
 }
