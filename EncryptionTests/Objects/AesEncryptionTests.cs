@@ -21,7 +21,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void WithBytes()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             byte[] decrypted = encryptor.Decrypt(encrypted, password, salt, iv, 1, 256);
@@ -33,7 +33,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void BasicEncryptionWithBytesUsingAesParameters()
         {
-            AesEncryption encryptor = new AesEncryption(iv, 4000, 256);
+            var encryptor = new AesEncryption(iv, 4000, 256);
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt);
             byte[] decrypted = encryptor.Decrypt(encrypted, password, salt);
@@ -45,7 +45,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void BasicEncryptionWithStrings()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             string encrypted = encryptor.Encrypt(text, password, salt, iv, 1, 256);
             string decrypted = encryptor.Decrypt(encrypted, password, salt, iv, 1, 256);
@@ -57,7 +57,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void BasicEncryptionWithStringsAesParameters()
         {
-            AesEncryption encryptor = new AesEncryption(iv, 4000, 256);
+            var encryptor = new AesEncryption(iv, 4000, 256);
 
             string encrypted = encryptor.Encrypt(text, password, salt);
             string decrypted = encryptor.Decrypt(encrypted, password, salt);
@@ -69,7 +69,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void IterationMismatchFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, password, salt, iv, 2, 256));
@@ -79,7 +79,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void KeySizeFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 128);
             Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, password, salt, iv, 1, 256));
@@ -89,7 +89,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void PasswordFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, "foo", salt, iv, 1, 256));
@@ -99,7 +99,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void SaltFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, password, "fooffoof", iv, 1, 256));
@@ -109,7 +109,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void PasswordEmpty()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             Assert.Throws<ArgumentException>(() => encryptor.Encrypt(byte_text, string.Empty, salt, iv, 1, 256));
         }
@@ -118,7 +118,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void TextEmpty()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             Assert.Throws<ArgumentException>(() => encryptor.Encrypt(string.Empty, password, salt, iv, 1, 256));
         }
@@ -127,7 +127,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void SaltTooShortFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             Assert.Throws<ArgumentException>(() => encryptor.Decrypt(encrypted, password, "fooffoo", iv, 1, 256));
@@ -137,7 +137,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void IvFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             byte[] decrypted = encryptor.Decrypt(encrypted, password, salt, "fooffooffooffoof", 1, 256);
@@ -149,7 +149,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void IvTooShortFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             Assert.Throws<ArgumentException>(() => encryptor.Decrypt(encrypted, password, salt, "fooffooffooffoo", 1, 256));
@@ -159,7 +159,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void IvTooLongFailure()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             byte[] encrypted = encryptor.Encrypt(byte_text, password, salt, iv, 1, 256);
             Assert.Throws<ArgumentException>(() => encryptor.Decrypt(encrypted, password, salt, "fooffooffooffoof1", 1, 256));
@@ -169,7 +169,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void TestSaltLength()
         {
-            AesEncryption encryptor = new AesEncryption();
+            var encryptor = new AesEncryption();
 
             string test_salt = encryptor.GenerateSalt();
 
