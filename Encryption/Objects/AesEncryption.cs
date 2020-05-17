@@ -109,9 +109,9 @@ namespace Encryption
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initialVector);
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-            byte[] cipherText_bytes = Convert.FromBase64String(cipherText);
+            byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
 
-            byte[] buffer = Decrypt(cipherText_bytes, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize);
+            byte[] buffer = Decrypt(cipherTextBytes, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize);
             return Encoding.UTF8.GetString(buffer);
         }
 
