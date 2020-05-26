@@ -1,33 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Encryption;
+﻿using Encryption;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace EncryptionUnitTests
 {
     [TestFixture]
     public class CryptoRngTests
     {
-        private static uint _MaxValue = 201;
-        private static int _Trials = 10000;
-        private static int _PasswordLength = 16;
+        private const uint MAX_VALUE = 201;
+        private const int TRIALS = 10000;
+        private const int PASSWORD_LENGTH = 16;
 
         CryptoRng _Rand = new CryptoRng();
 
         [Test]
         [Category("CryptoRng")]
-        public void TestRandomString()
+        public void CryptoRng_TestRandomString_Passes()
         {
-            string output = _Rand.GeneratePassword(_PasswordLength);
+            // output is in base64, this will always be longer than raw bytes
+            string output = _Rand.GeneratePassword(PASSWORD_LENGTH);
 
             Console.WriteLine(output);
-            Assert.IsTrue(output.Length > 16);
+            Assert.IsTrue(output.Length > PASSWORD_LENGTH);
         }
 
         [Test]
         [Category("CryptoRng")]
-        public void TestRandomInt()
+        public void CryptoRng_TestRandomInt_Passes()
         {
             for (int i = 0; i < 100; i++)
             {
@@ -38,16 +38,16 @@ namespace EncryptionUnitTests
 
         [Test]
         [Category("CryptoRng")]
-        public void TestValueDistrabution()
+        public void CryptoRng_TestValueDistrabution_Passes()
         {
             // framework to test generation methods.
             // any methods exposed should produce normal distabutions...
 
             var test = new Dictionary<uint, int>();
 
-            for (int i = 0; i < _Trials; i++)
+            for (int i = 0; i < TRIALS; i++)
             {
-                var buffer = _Rand.GenerateUint(0, _MaxValue);
+                var buffer = _Rand.GenerateUint(0, MAX_VALUE);
 
                 if (!test.ContainsKey(buffer))
                     test.Add(buffer, 0);
@@ -61,14 +61,16 @@ namespace EncryptionUnitTests
             foreach (var kvp in test)
                 sum += (kvp.Key * kvp.Value);
 
-            double average = sum / (double)_Trials;
+            double average = sum / (double)TRIALS;
 
             double deviation_sum = 0;
 
             foreach (var kvp in test)
                 deviation_sum += (kvp.Key - average) * (kvp.Key - average);
 
-            double std_deviation = Math.Pow((deviation_sum / (double)(_Trials - 1)), 0.5);
+            double std_deviation = Math.Pow((deviation_sum / (TRIALS - 1)), 0.5);
+
+            Assert.IsTrue(std_deviation > 0.5);
         }
     }
 }

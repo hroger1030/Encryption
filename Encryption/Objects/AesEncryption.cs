@@ -26,7 +26,7 @@ namespace Encryption
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and decrypt data.
     /// </summary>
-    public sealed class AesEncryption : ISymetricEncryptionProvider, IDisposable
+    public sealed class AesEncryption : ISymetricEncryptionProvider
     {
         private const int DEFAULT_KEY_SIZE = 256;
         private const int BLOCK_SIZE = 128;
@@ -34,23 +34,23 @@ namespace Encryption
         private const string DEFAULT_IV = "01234567890abcdef";
         private const int DEFAULT_ITERATIONS = 1;
 
-        private RNGCryptoServiceProvider _Random;
+        private readonly RNGCryptoServiceProvider _Random;
 
         /// <summary>
         /// Number of hash iterations used to generate password. 
         /// </summary>
-        private int _Iterations;
+        private readonly int _Iterations;
 
         /// <summary>
         /// Initialization vector (or IV). This value is required to encrypt the first block of plaintext data. 
         /// For RijndaelManaged class IV must be exactly 16 ASCII characters long.
         /// </summary>
-        private string _InitialVector;
+        private readonly string _InitialVector;
 
         /// <summary>
         /// Size of encryption key in bits. Allowed values are: 128, 192, and 256. 
         /// </summary>
-        private int _KeySize;
+        private readonly int _KeySize;
 
         public AesEncryption() : this(DEFAULT_IV, DEFAULT_ITERATIONS, DEFAULT_KEY_SIZE) { }
 
@@ -149,23 +149,24 @@ namespace Encryption
 
             using (var AES = new RijndaelManaged())
             {
-                var key = new Rfc2898DeriveBytes(password, salt, passwordIterations);
-
-                AES.KeySize = keySize;
-                AES.BlockSize = BLOCK_SIZE;
-                AES.Key = key.GetBytes(keySize / 8);
-                AES.IV = initialVector;
-                AES.Mode = CipherMode.CBC;
-
-                using (var ms = new MemoryStream())
+                using (var key = new Rfc2898DeriveBytes(password, salt, passwordIterations))
                 {
-                    using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(plainText, 0, plainText.Length);
-                        cs.Close();
-                    }
+                    AES.KeySize = keySize;
+                    AES.BlockSize = BLOCK_SIZE;
+                    AES.Key = key.GetBytes(keySize / 8);
+                    AES.IV = initialVector;
+                    AES.Mode = CipherMode.CBC;
 
-                    encryptedBytes = ms.ToArray();
+                    using (var ms = new MemoryStream())
+                    {
+                        using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(plainText, 0, plainText.Length);
+                            cs.Close();
+                        }
+
+                        encryptedBytes = ms.ToArray();
+                    }
                 }
             }
 
@@ -196,23 +197,24 @@ namespace Encryption
 
             using (var AES = new RijndaelManaged())
             {
-                var key = new Rfc2898DeriveBytes(password, salt, passwordIterations);
-
-                AES.KeySize = keySize;
-                AES.BlockSize = BLOCK_SIZE;
-                AES.Key = key.GetBytes(keySize / 8);
-                AES.IV = initialVector;
-                AES.Mode = CipherMode.CBC;
-
-                using (var ms = new MemoryStream())
+                using (var key = new Rfc2898DeriveBytes(password, salt, passwordIterations))
                 {
-                    using (var cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(encryptedText, 0, encryptedText.Length);
-                        cs.Close();
-                    }
+                    AES.KeySize = keySize;
+                    AES.BlockSize = BLOCK_SIZE;
+                    AES.Key = key.GetBytes(keySize / 8);
+                    AES.IV = initialVector;
+                    AES.Mode = CipherMode.CBC;
 
-                    decryptedBytes = ms.ToArray();
+                    using (var ms = new MemoryStream())
+                    {
+                        using (var cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(encryptedText, 0, encryptedText.Length);
+                            cs.Close();
+                        }
+
+                        decryptedBytes = ms.ToArray();
+                    }
                 }
             }
 
@@ -261,12 +263,6 @@ namespace Encryption
         public bool IsInitialVectorValid(byte[] initialVector)
         {
             return initialVector.Length == 16;
-        }
-
-        public void Dispose()
-        {
-            if (_Random != null)
-                _Random.Dispose();
         }
     }
 }
