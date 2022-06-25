@@ -21,13 +21,9 @@ using System.Security.Cryptography;
 
 namespace Encryption
 {
-    /// <summary>
-    /// The CryptoRand class is a wrapper around the RNGCryptoServiceProvider 
-    /// object, with helper methods to make implimentations simpler.
-    /// </summary>
     public sealed class CryptoRng : ICryptoRng, IDisposable
     {
-        private readonly RNGCryptoServiceProvider _Random = new RNGCryptoServiceProvider();
+        private readonly RandomNumberGenerator _Random = RandomNumberGenerator.Create();
 
         public CryptoRng() { }
 

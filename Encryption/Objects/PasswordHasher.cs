@@ -29,9 +29,9 @@ namespace Encryption
         private const int MIN_HASH_SIZE = 20;
         private const int MIN_SALT_SIZE = 16;
 
-        private int _HashSize;
-        private int _SaltSize;
-        private int _Iterations;
+        private readonly int _HashSize;
+        private readonly int _SaltSize;
+        private readonly int _Iterations;
 
         public PasswordHasher(int hashSize, int saltSize, int iterations)
         {
@@ -64,23 +64,23 @@ namespace Encryption
 
             password = password.Trim();
 
-            byte[] salt = new byte[MIN_SALT_SIZE];
-            byte[] hash = new byte[MIN_HASH_SIZE];
+            byte[] salt = new byte[_SaltSize];
+            byte[] hash = new byte[_HashSize];
 
             // generate salt
-            using (var crypto_provider = new RNGCryptoServiceProvider())
+            using (var crypto_provider = RandomNumberGenerator.Create())
             {
                 crypto_provider.GetBytes(salt);
             }
 
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations))
             {
-                hash = pbkdf2.GetBytes(MIN_HASH_SIZE);
+                hash = pbkdf2.GetBytes(_HashSize);
             }
 
-            byte[] buffer = new byte[MIN_HASH_SIZE + MIN_SALT_SIZE];
-            Array.Copy(salt, 0, buffer, 0, MIN_SALT_SIZE);
-            Array.Copy(hash, 0, buffer, MIN_SALT_SIZE, MIN_HASH_SIZE);
+            byte[] buffer = new byte[_HashSize + _SaltSize];
+            Array.Copy(salt, 0, buffer, 0, _SaltSize);
+            Array.Copy(hash, 0, buffer, _SaltSize, _HashSize);
 
             return Convert.ToBase64String(buffer);
         }
@@ -99,28 +99,26 @@ namespace Encryption
             byte[] buffer = Convert.FromBase64String(hash);
 
             // extract salt
-            byte[] salt = new byte[MIN_SALT_SIZE];
-            Array.Copy(buffer, 0, salt, 0, MIN_SALT_SIZE);
+            byte[] salt = new byte[_SaltSize];
+            Array.Copy(buffer, 0, salt, 0, _SaltSize);
 
             // extract old hash
-            byte[] old_hash = new byte[MIN_HASH_SIZE];
-            Array.Copy(buffer, MIN_SALT_SIZE, old_hash, 0, MIN_HASH_SIZE);
+            byte[] old_hash = new byte[_HashSize];
+            Array.Copy(buffer, _SaltSize, old_hash, 0, _HashSize);
 
             // Compute the hash on the password the user entered
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations))
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations);
+            byte[] new_hash = pbkdf2.GetBytes(_HashSize);
+
+            for (int i = 0; i < _HashSize; i++)
             {
-                byte[] new_hash = pbkdf2.GetBytes(MIN_HASH_SIZE);
-
-                for (int i = 0; i < MIN_HASH_SIZE; i++)
+                if (old_hash[i] != new_hash[i])
                 {
-                    if (old_hash[i] != new_hash[i])
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-
-                return true;
             }
+
+            return true;
         }
     }
 }

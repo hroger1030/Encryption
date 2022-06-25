@@ -43,12 +43,10 @@ namespace Encryption
             if (iterations < 1)
                 throw new ArgumentException("You must have 1 or more password iterations");
 
-            using (var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations))
-            {
-                // specify that we want to randomly generate a 20-byte salt
-                byte[] result = deriveBytes.GetBytes(20);
-                return Convert.ToBase64String(result);
-            }
+            using var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations);
+            // specify that we want to randomly generate a 20-byte salt
+            byte[] result = deriveBytes.GetBytes(20);
+            return Convert.ToBase64String(result);
         }
 
         /// <summary>
@@ -65,11 +63,9 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentException("input is null or empty");
 
-            using (var provider = new SHA1Managed())
-            {
-                byte[] result = provider.ComputeHash(input);
-                return Convert.ToBase64String(result);
-            }
+            using var provider = SHA1.Create();
+            byte[] result = provider.ComputeHash(input);
+            return Convert.ToBase64String(result);
         }
 
         /// <summary>
@@ -86,11 +82,9 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentException("input is null or empty");
 
-            using (var provider = new SHA256Managed())
-            {
-                byte[] result = provider.ComputeHash(input);
-                return Convert.ToBase64String(result);
-            }
+            using var provider = SHA512.Create();
+            byte[] result = provider.ComputeHash(input);
+            return Convert.ToBase64String(result);
         }
 
         /// <summary>
@@ -107,11 +101,9 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentException("input is null or empty");
 
-            using (var provider = new SHA384Managed())
-            {
-                byte[] result = provider.ComputeHash(input);
-                return Convert.ToBase64String(result);
-            }
+            using var provider = SHA384.Create();
+            byte[] result = provider.ComputeHash(input);
+            return Convert.ToBase64String(result);
         }
 
         /// <summary>
@@ -128,11 +120,9 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentException("input is null or empty");
 
-            using (var provider = new SHA512Managed())
-            {
-                byte[] result = provider.ComputeHash(input);
-                return Convert.ToBase64String(result);
-            }
+            using var provider = SHA512.Create();
+            byte[] result = provider.ComputeHash(input);
+            return Convert.ToBase64String(result);
         }
 
         /// <summary>
@@ -149,11 +139,9 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentException("input is null or empty");
 
-            using (var provider = new MD5CryptoServiceProvider())
-            {
-                byte[] result = provider.ComputeHash(input);
-                return Convert.ToBase64String(result);
-            }
+            using var provider = MD5.Create();
+            byte[] result = provider.ComputeHash(input);
+            return Convert.ToBase64String(result);
         }
     }
 }

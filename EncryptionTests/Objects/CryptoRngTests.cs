@@ -12,7 +12,7 @@ namespace EncryptionUnitTests
         private const int TRIALS = 10000;
         private const int PASSWORD_LENGTH = 16;
 
-        CryptoRng _Rand = new CryptoRng();
+        private readonly CryptoRng _Rand = new();
 
         [Test]
         [Category("CryptoRng")]

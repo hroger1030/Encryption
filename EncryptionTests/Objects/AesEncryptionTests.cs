@@ -20,10 +20,8 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void AesEncryption_WithBytes()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            byte[] decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
 
             Assert.IsTrue(BYTE_TEXT.SequenceEqual(decrypted));
         }
@@ -44,10 +42,8 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void AesEncryption_BasicEncryptionWithStrings_Passes()
         {
-            var encryptor = new AesEncryption();
-
-            string encrypted = encryptor.Encrypt(DEFAULT_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            string decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            string encrypted = AesEncryption.Encrypt(DEFAULT_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            string decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
 
             Assert.IsTrue(DEFAULT_TEXT == decrypted);
         }
@@ -68,78 +64,62 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void AesEncryption_IterationMismatchFailure_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 2, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            Assert.Throws<CryptographicException>(() => AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 2, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_KeySizeFailure_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 128);
-            Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 128);
+            Assert.Throws<CryptographicException>(() => AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_PasswordFailure_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, "foo", DEFAULT_SALT, DEFAULT_IV, 1, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            Assert.Throws<CryptographicException>(() => AesEncryption.Decrypt(encrypted, "foo", DEFAULT_SALT, DEFAULT_IV, 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_WrongSaltFail_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            Assert.Throws<CryptographicException>(() => encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, "fooffoof", DEFAULT_IV, 1, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            Assert.Throws<CryptographicException>(() => AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, "fooffoof", DEFAULT_IV, 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_PasswordEmpty_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            Assert.Throws<ArgumentException>(() => encryptor.Encrypt(BYTE_TEXT, string.Empty, DEFAULT_SALT, DEFAULT_IV, 1, 256));
+            Assert.Throws<ArgumentException>(() => AesEncryption.Encrypt(BYTE_TEXT, string.Empty, DEFAULT_SALT, DEFAULT_IV, 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_TextEmpty_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            Assert.Throws<ArgumentException>(() => encryptor.Encrypt(string.Empty, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256));
+            Assert.Throws<ArgumentException>(() => AesEncryption.Encrypt(string.Empty, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_SaltTooShort_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            Assert.Throws<ArgumentException>(() => encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, "fooffoo", DEFAULT_IV, 1, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            Assert.Throws<ArgumentException>(() => AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, "fooffoo", DEFAULT_IV, 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_WrongIv_Fails()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            byte[] decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoof", 1, 256);
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoof", 1, 256);
 
             Assert.IsFalse(BYTE_TEXT.SequenceEqual(decrypted));
         }
@@ -148,20 +128,16 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void AesEncryption_IvTooShort_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            Assert.Throws<ArgumentException>(() => encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoo", 1, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            Assert.Throws<ArgumentException>(() => AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoo", 1, 256));
         }
 
         [Test]
         [Category("AesEncryption")]
         public void AesEncryption_IvTooLong_Throws()
         {
-            var encryptor = new AesEncryption();
-
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
-            Assert.Throws<ArgumentException>(() => encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoof1", 1, 256));
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, 256);
+            Assert.Throws<ArgumentException>(() => AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoof1", 1, 256));
         }
 
         [Test]
@@ -174,8 +150,8 @@ namespace EncryptionUnitTests
 
             Assert.IsTrue(test_salt.Length > SALT_LENGTH);
 
-            byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, 1, 256);
-            byte[] decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, 1, 256);
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, 1, 256);
+            byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, 1, 256);
 
             Assert.IsTrue(BYTE_TEXT.SequenceEqual(decrypted));
         }
