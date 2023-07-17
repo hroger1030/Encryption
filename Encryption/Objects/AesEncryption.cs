@@ -128,10 +128,10 @@ namespace Encryption
         private static byte[] Encrypt(byte[] plainText, byte[] password, byte[] salt, byte[] initialVector, int passwordIterations, int keySize)
         {
             if (plainText == null || plainText.Length < 1)
-                throw new ArgumentException("plain text is null or empty");
+                throw new ArgumentNullException(nameof(plainText), "plain text is null or empty");
 
             if (password == null || password.Length < 1)
-                throw new ArgumentException("Password is null or empty");
+                throw new ArgumentNullException(nameof(password), "Password is null or empty");
 
             if (!IsSaltValid(salt))
                 throw new ArgumentException("Salt must be at least 8 bytes long");
@@ -172,10 +172,10 @@ namespace Encryption
         private static byte[] Decrypt(byte[] encryptedText, byte[] password, byte[] salt, byte[] initialVector, int passwordIterations, int keySize)
         {
             if (encryptedText == null || encryptedText.Length < 1)
-                throw new ArgumentException("cipher text is null or empty");
+                throw new ArgumentNullException(nameof(encryptedText), "cipher text is null or empty");
 
             if (password == null || password.Length < 1)
-                throw new ArgumentException("Pass phrase is null or empty");
+                throw new ArgumentNullException(nameof(password), "Pass phrase is null or empty");
 
             if (!IsSaltValid(salt))
                 throw new ArgumentException("Salt must be at least 8 bytes long");

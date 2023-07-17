@@ -35,15 +35,16 @@ namespace Encryption
         public static string ComputePBKDF2Hash(byte[] input, byte[] salt, int iterations)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+                throw new ArgumentNullException(nameof(input), "input is null or empty");
 
-            if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+            if (salt == null || salt.Length == 0)
+                throw new ArgumentNullException(nameof(salt), "input is null or empty");
 
             if (iterations < 1)
                 throw new ArgumentException("You must have 1 or more password iterations");
 
             using var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations);
+
             // specify that we want to randomly generate a 20-byte salt
             byte[] result = deriveBytes.GetBytes(20);
             return Convert.ToBase64String(result);
@@ -61,7 +62,7 @@ namespace Encryption
         public static string ComputeSHA160Hash(byte[] input)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+                throw new ArgumentNullException(nameof(input), "input is null or empty");
 
             using var provider = SHA1.Create();
             byte[] result = provider.ComputeHash(input);
@@ -80,7 +81,7 @@ namespace Encryption
         public static string ComputeSHA256Hash(byte[] input)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+                throw new ArgumentNullException(nameof(input), "input is null or empty");
 
             using var provider = SHA512.Create();
             byte[] result = provider.ComputeHash(input);
@@ -99,7 +100,7 @@ namespace Encryption
         public static string ComputeSHA384Hash(byte[] input)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+                throw new ArgumentNullException(nameof(input), "input is null or empty");
 
             using var provider = SHA384.Create();
             byte[] result = provider.ComputeHash(input);
@@ -118,7 +119,7 @@ namespace Encryption
         public static string ComputeSHA512Hash(byte[] input)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+                throw new ArgumentNullException(nameof(input), "input is null or empty");
 
             using var provider = SHA512.Create();
             byte[] result = provider.ComputeHash(input);
@@ -137,7 +138,7 @@ namespace Encryption
         public static string ComputeMD5Hash(byte[] input)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("input is null or empty");
+                throw new ArgumentNullException(nameof(input), "input is null or empty");
 
             using var provider = MD5.Create();
             byte[] result = provider.ComputeHash(input);
@@ -145,4 +146,3 @@ namespace Encryption
         }
     }
 }
-
