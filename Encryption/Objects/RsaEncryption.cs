@@ -59,11 +59,9 @@ namespace Encryption
             if (IsValidKeySize(key_size))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
-            using (var provider = new RSACryptoServiceProvider(key_size))
-            {
-                provider.FromXmlString(public_key);
-                return provider.Encrypt(data, true);
-            }
+            using var provider = new RSACryptoServiceProvider(key_size);
+            provider.FromXmlString(public_key);
+            return provider.Encrypt(data, true);
         }
 
         public string DecryptText(string text, string private_key, int key_size)
@@ -83,11 +81,9 @@ namespace Encryption
             if (IsValidKeySize(key_size))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
-            using (var provider = new RSACryptoServiceProvider(key_size))
-            {
-                provider.FromXmlString(private_key);
-                return provider.Decrypt(data, true);
-            }
+            using var provider = new RSACryptoServiceProvider(key_size);
+            provider.FromXmlString(private_key);
+            return provider.Decrypt(data, true);
         }
 
         public void GenerateKeys(int key_size, out string public_key, out string private_key)
@@ -95,11 +91,9 @@ namespace Encryption
             if (IsValidKeySize(key_size))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
-            using (var provider = new RSACryptoServiceProvider(key_size))
-            {
-                public_key = provider.ToXmlString(false);
-                private_key = provider.ToXmlString(true);
-            }
+            using var provider = new RSACryptoServiceProvider(key_size);
+            public_key = provider.ToXmlString(false);
+            private_key = provider.ToXmlString(true);
         }
     }
 }

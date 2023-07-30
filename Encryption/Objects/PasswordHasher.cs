@@ -18,6 +18,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Encryption
 {
@@ -49,7 +50,7 @@ namespace Encryption
             _Iterations = iterations;
         }
 
-        public PasswordHasher(int iterations) : this (MIN_HASH_SIZE, MIN_SALT_SIZE, iterations)
+        public PasswordHasher(int iterations) : this(MIN_HASH_SIZE, MIN_SALT_SIZE, iterations)
         {
             if (iterations < 1)
                 throw new ArgumentException("Iterations cannot be less that 1");
@@ -83,6 +84,11 @@ namespace Encryption
             Array.Copy(hash, 0, buffer, _SaltSize, _HashSize);
 
             return Convert.ToBase64String(buffer);
+        }
+
+        public async Task<string> GenerateHashAsync(string password)
+        {
+            return await Task.FromResult(GenerateHash(password));
         }
 
         public bool Verify(string password, string hash)
@@ -119,6 +125,11 @@ namespace Encryption
             }
 
             return true;
+        }
+
+        public async Task<bool> VerifyAsync(string password, string hash)
+        {
+            return await Task.FromResult(Verify(password, hash));
         }
     }
 }
