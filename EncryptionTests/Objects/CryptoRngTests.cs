@@ -22,7 +22,7 @@ namespace EncryptionUnitTests
             string output = _Rand.GeneratePassword(PASSWORD_LENGTH);
 
             Console.WriteLine(output);
-            Assert.IsTrue(output.Length > PASSWORD_LENGTH);
+            Assert.That((output.Length > PASSWORD_LENGTH), Is.True);
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace EncryptionUnitTests
             for (int i = 0; i < 100; i++)
             {
                 var output = _Rand.GenerateInt(1,10);
-                Assert.IsTrue(output >= 1 && output <= 10, $"Random number '{output}' is out of range");
+                Assert.That((output >= 1 && output <= 10), Is.True, $"Random number '{output}' is out of range");
             }
         }
 
@@ -70,7 +70,7 @@ namespace EncryptionUnitTests
 
             double std_deviation = Math.Pow((deviation_sum / (TRIALS - 1)), 0.5);
 
-            Assert.IsTrue(std_deviation > 0.5);
+            Assert.That((std_deviation > 0.5), Is.True);
         }
     }
 }

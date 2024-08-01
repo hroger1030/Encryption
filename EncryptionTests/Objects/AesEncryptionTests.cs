@@ -26,7 +26,7 @@ namespace EncryptionUnitTests
             byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, keySize);
             byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, keySize);
 
-            Assert.IsTrue(BYTE_TEXT.SequenceEqual(decrypted));
+            Assert.That(BYTE_TEXT.SequenceEqual(decrypted), Is.True);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace EncryptionUnitTests
             byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT);
             byte[] decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT);
 
-            Assert.IsTrue(BYTE_TEXT.SequenceEqual(decrypted));
+            Assert.That(BYTE_TEXT.SequenceEqual(decrypted), Is.True);
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace EncryptionUnitTests
             string encrypted = AesEncryption.Encrypt(DEFAULT_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, keySize);
             string decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, 1, keySize);
 
-            Assert.IsTrue(DEFAULT_TEXT == decrypted);
+            Assert.That((DEFAULT_TEXT == decrypted), Is.True);
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace EncryptionUnitTests
             string encrypted = encryptor.Encrypt(DEFAULT_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT);
             string decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT);
 
-            Assert.IsTrue(DEFAULT_TEXT == decrypted);
+            Assert.That((DEFAULT_TEXT == decrypted), Is.True);
         }
 
         [Test]
@@ -217,7 +217,7 @@ namespace EncryptionUnitTests
             byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT, DEFAULT_IV, passes, keySize);
             byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT, "fooffooffooffoof", passes, keySize);
 
-            Assert.IsFalse(BYTE_TEXT.SequenceEqual(decrypted));
+            Assert.That(BYTE_TEXT.SequenceEqual(decrypted), Is.False);
         }
 
         [Test]
@@ -271,12 +271,12 @@ namespace EncryptionUnitTests
 
             string test_salt = encryptor.GenerateSalt();
 
-            Assert.IsTrue(test_salt.Length > SALT_LENGTH);
+            Assert.That((test_salt.Length > SALT_LENGTH), Is.True);
 
             byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, passes, keySize);
             byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, passes, keySize);
 
-            Assert.IsTrue(BYTE_TEXT.SequenceEqual(decrypted));
+            Assert.That((BYTE_TEXT.SequenceEqual(decrypted)), Is.True);
         }
     }
 }

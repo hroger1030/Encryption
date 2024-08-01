@@ -25,7 +25,7 @@ namespace EncryptionUnitTests
         public void PasswordHasher_TestHashComparison_Passes()
         {
             string hash = _DefaultHasher.GenerateHash(PASSWORD1);
-            Assert.IsTrue(_DefaultHasher.Verify(PASSWORD1, hash));
+            Assert.That(_DefaultHasher.Verify(PASSWORD1, hash), Is.True);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace EncryptionUnitTests
         public void PasswordHasher_TestHashComparisonWithUnicode_Passes()
         {
             string hash = _DefaultHasher.GenerateHash(PASSWORD2);
-            Assert.IsTrue(_DefaultHasher.Verify(PASSWORD2, hash));
+            Assert.That(_DefaultHasher.Verify(PASSWORD2, hash), Is.True);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace EncryptionUnitTests
             string hash1 = _DefaultHasher.GenerateHash(PASSWORD1);
             string hash2 = _DefaultHasher.GenerateHash(PASSWORD1);
 
-            Assert.IsTrue(hash1 != hash2);
+            Assert.That((hash1 != hash2), Is.True);
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace EncryptionUnitTests
             string buffer = _DefaultHasher.GenerateHash("Foo");
             bool results = _DefaultHasher.Verify("foo", buffer);
 
-            Assert.IsFalse(results, "Hashes should not match");
+            Assert.That(results, Is.False, "Hashes should not match");
         }
     }
 }
