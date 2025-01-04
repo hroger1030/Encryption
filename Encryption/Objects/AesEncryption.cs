@@ -149,7 +149,7 @@ namespace Encryption
 
             using (var AES = Aes.Create())
             {
-                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations);
+                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, HashGenerator.HASH_ALGORITHM);
                 AES.KeySize = keySize;
                 AES.BlockSize = BLOCK_SIZE;
                 AES.Key = key.GetBytes(keySize / 8);
@@ -193,7 +193,7 @@ namespace Encryption
 
             using (var AES = Aes.Create())
             {
-                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations);
+                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, HashGenerator.HASH_ALGORITHM);
                 AES.KeySize = keySize;
                 AES.BlockSize = BLOCK_SIZE;
                 AES.Key = key.GetBytes(keySize / 8);

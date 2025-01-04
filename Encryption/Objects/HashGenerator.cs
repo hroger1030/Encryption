@@ -24,6 +24,8 @@ namespace Encryption
 {
     public static class HashGenerator
     {
+        public static readonly HashAlgorithmName HASH_ALGORITHM = HashAlgorithmName.SHA256;
+
         public static string ComputePBKDF2Hash(string input, string salt, int iterations)
         {
             byte[] input_bytes = Encoding.UTF8.GetBytes(input);
@@ -43,7 +45,7 @@ namespace Encryption
             if (iterations < 1)
                 throw new ArgumentException("You must have 1 or more password iterations");
 
-            using var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations);
+            using var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations, HashGenerator.HASH_ALGORITHM);
 
             // specify that we want to randomly generate a 20-byte salt
             byte[] result = deriveBytes.GetBytes(20);

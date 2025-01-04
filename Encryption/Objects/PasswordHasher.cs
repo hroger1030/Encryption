@@ -74,7 +74,7 @@ namespace Encryption
                 crypto_provider.GetBytes(salt);
             }
 
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations))
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, HashGenerator.HASH_ALGORITHM))
             {
                 hash = pbkdf2.GetBytes(_HashSize);
             }
@@ -113,7 +113,7 @@ namespace Encryption
             Array.Copy(buffer, _SaltSize, old_hash, 0, _HashSize);
 
             // Compute the hash on the password the user entered
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations);
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, HashGenerator.HASH_ALGORITHM);
             byte[] new_hash = pbkdf2.GetBytes(_HashSize);
 
             for (int i = 0; i < _HashSize; i++)
