@@ -33,6 +33,7 @@ namespace Encryption
         private const int DEFAULT_SALT_LENGTH = 64;
         private const string DEFAULT_IV = "01234567890abcdef";
         private const int DEFAULT_ITERATIONS = 1;
+        private const string DEFAULT_HASH_ALGORITHM = "SHA512";
 
         private readonly RandomNumberGenerator _Random;
 
@@ -52,80 +53,86 @@ namespace Encryption
         /// </summary>
         private readonly int _KeySize;
 
-        public AesEncryption() : this(DEFAULT_IV, DEFAULT_ITERATIONS, DEFAULT_KEY_SIZE) { }
+        /// <summary>
+        /// The specific hash algorithm that is to be used.
+        /// </summary>
+        private readonly string _HashAlgorithm;
 
-        public AesEncryption(string initialVector, int passwordIterations, int keySize)
+        public AesEncryption() : this(DEFAULT_IV, DEFAULT_ITERATIONS, DEFAULT_KEY_SIZE, DEFAULT_HASH_ALGORITHM) { }
+
+        public AesEncryption(string initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             _Random = RandomNumberGenerator.Create();
             _InitialVector = initialVector;
             _Iterations = passwordIterations;
             _KeySize = keySize;
+            _HashAlgorithm = hashAlgorithm;
         }
 
 
         public string Encrypt(string plainText, string password, string salt)
         {
-            return Encrypt(plainText, password, salt, _InitialVector, _Iterations, _KeySize);
+            return Encrypt(plainText, password, salt, _InitialVector, _Iterations, _KeySize, _HashAlgorithm);
         }
 
         public byte[] Encrypt(byte[] plainText, string password, string salt)
         {
-            return Encrypt(plainText, password, salt, _InitialVector, _Iterations, _KeySize);
+            return Encrypt(plainText, password, salt, _InitialVector, _Iterations, _KeySize, _HashAlgorithm);
         }
 
-        public static string Encrypt(string plainText, string password, string salt, string initialVector, int passwordIterations, int keySize)
+        public static string Encrypt(string plainText, string password, string salt, string initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initialVector);
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-            byte[] buffer = Encrypt(plainTextBytes, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize);
+            byte[] buffer = Encrypt(plainTextBytes, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize, hashAlgorithm);
             return Convert.ToBase64String(buffer);
         }
 
-        public static byte[] Encrypt(byte[] plainText, string password, string salt, string initialVector, int passwordIterations, int keySize)
+        public static byte[] Encrypt(byte[] plainText, string password, string salt, string initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initialVector);
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return Encrypt(plainText, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize);
+            return Encrypt(plainText, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize, hashAlgorithm);
         }
 
 
         public string Decrypt(string cipherText, string password, string salt)
         {
-            return Decrypt(cipherText, password, salt, _InitialVector, _Iterations, _KeySize);
+            return Decrypt(cipherText, password, salt, _InitialVector, _Iterations, _KeySize, _HashAlgorithm);
         }
 
         public byte[] Decrypt(byte[] cipherText, string password, string salt)
         {
-            return Decrypt(cipherText, password, salt, _InitialVector, _Iterations, _KeySize);
+            return Decrypt(cipherText, password, salt, _InitialVector, _Iterations, _KeySize, _HashAlgorithm);
         }
 
-        public static string Decrypt(string cipherText, string password, string salt, string initialVector, int passwordIterations, int keySize)
+        public static string Decrypt(string cipherText, string password, string salt, string initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initialVector);
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
             byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
 
-            byte[] buffer = Decrypt(cipherTextBytes, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize);
+            byte[] buffer = Decrypt(cipherTextBytes, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize, hashAlgorithm);
             return Encoding.UTF8.GetString(buffer);
         }
 
-        public static byte[] Decrypt(byte[] cipherText, string password, string salt, string initialVector, int passwordIterations, int keySize)
+        public static byte[] Decrypt(byte[] cipherText, string password, string salt, string initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initialVector);
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            return Decrypt(cipherText, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize);
+            return Decrypt(cipherText, passwordBytes, saltBytes, initVectorBytes, passwordIterations, keySize, hashAlgorithm);
         }
 
 
-        private static byte[] Encrypt(byte[] plainText, byte[] password, byte[] salt, byte[] initialVector, int passwordIterations, int keySize)
+        private static byte[] Encrypt(byte[] plainText, byte[] password, byte[] salt, byte[] initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             if (plainText == null || plainText.Length < 1)
                 throw new ArgumentNullException(nameof(plainText), "plain text is null or empty");
@@ -145,11 +152,14 @@ namespace Encryption
             if (!IsKeySizeValid(keySize))
                 throw new ArgumentException("Invalid key size, must be 128, 192, or 256 bytes in size");
 
+            if (string.IsNullOrWhiteSpace(hashAlgorithm))
+                throw new ArgumentNullException(nameof(hashAlgorithm), "hashAlgorithm is null or empty");
+
             byte[] encryptedBytes = null;
 
             using (var AES = Aes.Create())
             {
-                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, HashGenerator.HASH_ALGORITHM);
+                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, new HashAlgorithmName(hashAlgorithm));
                 AES.KeySize = keySize;
                 AES.BlockSize = BLOCK_SIZE;
                 AES.Key = key.GetBytes(keySize / 8);
@@ -169,7 +179,7 @@ namespace Encryption
             return encryptedBytes;
         }
 
-        private static byte[] Decrypt(byte[] encryptedText, byte[] password, byte[] salt, byte[] initialVector, int passwordIterations, int keySize)
+        private static byte[] Decrypt(byte[] encryptedText, byte[] password, byte[] salt, byte[] initialVector, int passwordIterations, int keySize, string hashAlgorithm)
         {
             if (encryptedText == null || encryptedText.Length < 1)
                 throw new ArgumentNullException(nameof(encryptedText), "cipher text is null or empty");
@@ -189,11 +199,17 @@ namespace Encryption
             if (!IsKeySizeValid(keySize))
                 throw new ArgumentException("Invalid key size, must be 128, 192, or 256 bytes in size");
 
+            if (string.IsNullOrWhiteSpace(hashAlgorithm))
+                throw new ArgumentNullException(nameof(hashAlgorithm));
+
+            if (string.IsNullOrWhiteSpace(hashAlgorithm))
+                throw new ArgumentNullException(nameof(hashAlgorithm), "hashAlgorithm is null or empty");
+
             byte[] decryptedBytes = null;
 
             using (var AES = Aes.Create())
             {
-                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, HashGenerator.HASH_ALGORITHM);
+                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, new HashAlgorithmName(hashAlgorithm));
                 AES.KeySize = keySize;
                 AES.BlockSize = BLOCK_SIZE;
                 AES.Key = key.GetBytes(keySize / 8);

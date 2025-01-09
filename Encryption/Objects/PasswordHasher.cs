@@ -33,8 +33,9 @@ namespace Encryption
         private readonly int _HashSize;
         private readonly int _SaltSize;
         private readonly int _Iterations;
+        private readonly string _HashAlgorithm;
 
-        public PasswordHasher(int hashSize, int saltSize, int iterations)
+        public PasswordHasher(int hashSize, int saltSize, int iterations, string hashAlgorithm)
         {
             if (hashSize < MIN_HASH_SIZE)
                 throw new ArgumentException("Hash size needs to be at least 20 bytes");
@@ -45,17 +46,13 @@ namespace Encryption
             if (iterations < 1)
                 throw new ArgumentException("Iterations cannot be less that 1");
 
+            if (string.IsNullOrWhiteSpace(hashAlgorithm))
+                throw new ArgumentNullException(nameof(hashAlgorithm), "hashAlgorithm is null or empty");
+
             _HashSize = hashSize;
             _SaltSize = saltSize;
             _Iterations = iterations;
-        }
-
-        public PasswordHasher(int iterations) : this(MIN_HASH_SIZE, MIN_SALT_SIZE, iterations)
-        {
-            if (iterations < 1)
-                throw new ArgumentException("Iterations cannot be less that 1");
-
-            _Iterations = iterations;
+            _HashAlgorithm = hashAlgorithm;
         }
 
         public string GenerateHash(string password)
@@ -74,7 +71,7 @@ namespace Encryption
                 crypto_provider.GetBytes(salt);
             }
 
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, HashGenerator.HASH_ALGORITHM))
+            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm)))
             {
                 hash = pbkdf2.GetBytes(_HashSize);
             }
@@ -113,7 +110,7 @@ namespace Encryption
             Array.Copy(buffer, _SaltSize, old_hash, 0, _HashSize);
 
             // Compute the hash on the password the user entered
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, HashGenerator.HASH_ALGORITHM);
+            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm));
             byte[] new_hash = pbkdf2.GetBytes(_HashSize);
 
             for (int i = 0; i < _HashSize; i++)
