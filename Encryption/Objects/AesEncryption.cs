@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2007 Roger Hill
+Copyright (c) 2017 Roger Hill
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -31,7 +31,7 @@ namespace Encryption
         private const int DEFAULT_KEY_SIZE = 256;
         private const int BLOCK_SIZE = 128;
         private const int DEFAULT_SALT_LENGTH = 64;
-        private const string DEFAULT_IV = "01234567890abcdef";
+        private const string DEFAULT_IV = "0123456789abcdef";
         private const int DEFAULT_ITERATIONS = 1;
         private const string DEFAULT_HASH_ALGORITHM = "SHA512";
 
@@ -159,10 +159,9 @@ namespace Encryption
 
             using (var AES = Aes.Create())
             {
-                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, new HashAlgorithmName(hashAlgorithm));
                 AES.KeySize = keySize;
                 AES.BlockSize = BLOCK_SIZE;
-                AES.Key = key.GetBytes(keySize / 8);
+                AES.Key = Rfc2898DeriveBytes.Pbkdf2(password, salt, passwordIterations, new HashAlgorithmName(hashAlgorithm), keySize / 8);
                 AES.IV = initialVector;
                 AES.Mode = CipherMode.CBC;
 
@@ -209,10 +208,9 @@ namespace Encryption
 
             using (var AES = Aes.Create())
             {
-                using var key = new Rfc2898DeriveBytes(password, salt, passwordIterations, new HashAlgorithmName(hashAlgorithm));
                 AES.KeySize = keySize;
                 AES.BlockSize = BLOCK_SIZE;
-                AES.Key = key.GetBytes(keySize / 8);
+                AES.Key = Rfc2898DeriveBytes.Pbkdf2(password, salt, passwordIterations, new HashAlgorithmName(hashAlgorithm), keySize / 8);
                 AES.IV = initialVector;
                 AES.Mode = CipherMode.CBC;
 

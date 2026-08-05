@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2007 Roger Hill
+Copyright (c) 2017 Roger Hill
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -71,10 +71,7 @@ namespace Encryption
                 crypto_provider.GetBytes(salt);
             }
 
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm)))
-            {
-                hash = pbkdf2.GetBytes(_HashSize);
-            }
+            hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm), _HashSize);
 
             byte[] buffer = new byte[_HashSize + _SaltSize];
             Array.Copy(salt, 0, buffer, 0, _SaltSize);
@@ -110,8 +107,7 @@ namespace Encryption
             Array.Copy(buffer, _SaltSize, old_hash, 0, _HashSize);
 
             // Compute the hash on the password the user entered
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm));
-            byte[] new_hash = pbkdf2.GetBytes(_HashSize);
+            byte[] new_hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm), _HashSize);
 
             for (int i = 0; i < _HashSize; i++)
             {

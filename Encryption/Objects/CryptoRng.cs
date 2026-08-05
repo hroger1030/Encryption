@@ -1,7 +1,7 @@
 ﻿/*
 The MIT License (MIT)
 
-Copyright (c) 2007 Roger Hill
+Copyright (c) 2017 Roger Hill
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -143,10 +143,10 @@ namespace Encryption
 
             for (int i = 0; i < length; i++)
             {
-                buffer[i] = alphabet[GenerateInt(0, alphabet.Length)];
+                buffer[i] = alphabet[GenerateInt(0, alphabet.Length - 1)];
             }
 
-            return buffer.ToString();
+            return new string(buffer);
         }
 
         public void Dispose()

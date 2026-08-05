@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2007 Roger Hill
+Copyright (c) 2017 Roger Hill
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -39,7 +39,7 @@ namespace Encryption
             // if you have the Microsoft Enhanced Cryptographic Provider installed. It supports key sizes from 384 
             // bits to 512 bits in increments of 8 bits if you have the Microsoft Base Cryptographic Provider installed.
 
-            return (key_size % 8) != 0;
+            return (key_size % 8) == 0;
         }
 
         public string Encrypt(string text, string public_key, int key_size)
@@ -56,7 +56,7 @@ namespace Encryption
             if (string.IsNullOrEmpty(public_key))
                 throw new ArgumentException("Public key is null or empty");
 
-            if (IsValidKeySize(key_size))
+            if (!IsValidKeySize(key_size))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
             using var provider = new RSACryptoServiceProvider(key_size);
@@ -78,7 +78,7 @@ namespace Encryption
             if (string.IsNullOrEmpty(private_key))
                 throw new ArgumentException("Private key is null or empty");
 
-            if (IsValidKeySize(key_size))
+            if (!IsValidKeySize(key_size))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
             using var provider = new RSACryptoServiceProvider(key_size);
@@ -88,7 +88,7 @@ namespace Encryption
 
         public void GenerateKeys(int key_size, out string public_key, out string private_key)
         {
-            if (IsValidKeySize(key_size))
+            if (!IsValidKeySize(key_size))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
             using var provider = new RSACryptoServiceProvider(key_size);

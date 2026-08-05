@@ -1,7 +1,26 @@
-﻿using Encryption;
+﻿/*
+The MIT License (MIT)
+
+Copyright (c) 2017 Roger Hill
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+using Encryption;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EncryptionUnitTests
 {
@@ -71,6 +90,113 @@ namespace EncryptionUnitTests
             double std_deviation = Math.Pow((deviation_sum / (TRIALS - 1)), 0.5);
 
             Assert.That((std_deviation > 0.5), Is.True);
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateGuid_ProducesDistinctNonEmptyValues()
+        {
+            var guid1 = _Rand.GenerateGuid();
+            var guid2 = _Rand.GenerateGuid();
+
+            Assert.That(guid1, Is.Not.EqualTo(Guid.Empty));
+            Assert.That(guid1, Is.Not.EqualTo(guid2));
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateDouble_ProducesVaryingValues()
+        {
+            var values = Enumerable.Range(0, 20).Select(_ => _Rand.GenerateDouble()).Distinct();
+
+            Assert.That(values.Count(), Is.GreaterThan(1));
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateIntUnbounded_ProducesVaryingValues()
+        {
+            var values = Enumerable.Range(0, 20).Select(_ => _Rand.GenerateInt()).Distinct();
+
+            Assert.That(values.Count(), Is.GreaterThan(1));
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateIntWithMax_StaysInRange()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var output = _Rand.GenerateInt(10);
+                Assert.That((output >= 0 && output <= 10), Is.True, $"Random number '{output}' is out of range");
+            }
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateUintUnbounded_ProducesVaryingValues()
+        {
+            var values = Enumerable.Range(0, 20).Select(_ => _Rand.GenerateUint()).Distinct();
+
+            Assert.That(values.Count(), Is.GreaterThan(1));
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateUintWithMax_StaysInRange()
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var output = _Rand.GenerateUint(10);
+                Assert.That((output <= 10), Is.True, $"Random number '{output}' is out of range");
+            }
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateUlong_ProducesVaryingValues()
+        {
+            var values = Enumerable.Range(0, 20).Select(_ => _Rand.GenerateUlong()).Distinct();
+
+            Assert.That(values.Count(), Is.GreaterThan(1));
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(16)]
+        [TestCase(64)]
+        public void CryptoRng_GenerateByteArray_ReturnsRequestedLength(int length)
+        {
+            byte[] output = _Rand.GenerateByteArray(length);
+
+            Assert.That(output.Length, Is.EqualTo(length));
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GenerateByteArray_ProducesVaryingContent()
+        {
+            byte[] first = _Rand.GenerateByteArray(32);
+            byte[] second = _Rand.GenerateByteArray(32);
+
+            Assert.That(first.SequenceEqual(second), Is.False);
+        }
+
+        [Test]
+        [Category("CryptoRng")]
+        public void CryptoRng_GeneratePasswordWithAlphabet_OnlyUsesAlphabetCharacters()
+        {
+            const string alphabet = "abc123";
+
+            for (int i = 0; i < 100; i++)
+            {
+                string password = _Rand.GeneratePassword(alphabet, PASSWORD_LENGTH);
+
+                Assert.That(password.Length, Is.EqualTo(PASSWORD_LENGTH));
+                Assert.That(password.All(alphabet.Contains), Is.True, $"Password '{password}' contained a character outside the alphabet");
+            }
         }
     }
 }

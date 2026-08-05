@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2007 Roger Hill
+Copyright (c) 2017 Roger Hill
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
 (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, 
@@ -47,10 +47,8 @@ namespace Encryption
                 throw new ArgumentNullException(nameof(hashAlgorithm), "hashAlgorithm is null or empty");
 
 
-            using var deriveBytes = new Rfc2898DeriveBytes(input, salt, iterations, new HashAlgorithmName(hashAlgorithm));
-
             // specify that we want to randomly generate a 20-byte salt
-            byte[] result = deriveBytes.GetBytes(20);
+            byte[] result = Rfc2898DeriveBytes.Pbkdf2(input, salt, iterations, new HashAlgorithmName(hashAlgorithm), 20);
             return Convert.ToBase64String(result);
         }
 
@@ -68,8 +66,7 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentNullException(nameof(input), "input is null or empty");
 
-            using var provider = SHA1.Create();
-            byte[] result = provider.ComputeHash(input);
+            byte[] result = SHA1.HashData(input);
             return Convert.ToBase64String(result);
         }
 
@@ -87,8 +84,7 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentNullException(nameof(input), "input is null or empty");
 
-            using var provider = SHA512.Create();
-            byte[] result = provider.ComputeHash(input);
+            byte[] result = SHA256.HashData(input);
             return Convert.ToBase64String(result);
         }
 
@@ -106,8 +102,7 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentNullException(nameof(input), "input is null or empty");
 
-            using var provider = SHA384.Create();
-            byte[] result = provider.ComputeHash(input);
+            byte[] result = SHA384.HashData(input);
             return Convert.ToBase64String(result);
         }
 
@@ -125,8 +120,7 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentNullException(nameof(input), "input is null or empty");
 
-            using var provider = SHA512.Create();
-            byte[] result = provider.ComputeHash(input);
+            byte[] result = SHA512.HashData(input);
             return Convert.ToBase64String(result);
         }
 
@@ -144,8 +138,7 @@ namespace Encryption
             if (input == null || input.Length == 0)
                 throw new ArgumentNullException(nameof(input), "input is null or empty");
 
-            using var provider = MD5.Create();
-            byte[] result = provider.ComputeHash(input);
+            byte[] result = MD5.HashData(input);
             return Convert.ToBase64String(result);
         }
     }
