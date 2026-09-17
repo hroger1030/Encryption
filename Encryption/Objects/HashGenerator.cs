@@ -26,10 +26,10 @@ namespace Encryption
     {
         public static string ComputePBKDF2Hash(string input, string salt, int iterations, string hashAlgorithm)
         {
-            byte[] input_bytes = Encoding.UTF8.GetBytes(input);
-            byte[] salt_bytes = Encoding.UTF8.GetBytes(salt);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
 
-            return ComputePBKDF2Hash(input_bytes, salt_bytes, iterations, hashAlgorithm);
+            return ComputePBKDF2Hash(inputBytes, saltBytes, iterations, hashAlgorithm);
         }
 
         public static string ComputePBKDF2Hash(byte[] input, byte[] salt, int iterations, string hashAlgorithm)

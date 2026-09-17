@@ -86,10 +86,10 @@ namespace Encryption
 
             maxValue++;
 
-            byte[] random_number = new byte[4];
-            _Random.GetBytes(random_number);
+            byte[] randomNumber = new byte[4];
+            _Random.GetBytes(randomNumber);
 
-            uint scale = BitConverter.ToUInt32(random_number, 0);
+            uint scale = BitConverter.ToUInt32(randomNumber, 0);
 
             // And use that to pick a random number >= min and < max
             return (int)(minValue + (maxValue - minValue) * (scale / (uint.MaxValue + 1.0)));
@@ -114,19 +114,19 @@ namespace Encryption
 
             uint offset = maxValue - minValue;
 
-            byte[] random_number = new byte[4];
-            _Random.GetBytes(random_number);
+            byte[] randomNumber = new byte[4];
+            _Random.GetBytes(randomNumber);
 
-            uint buffer = BitConverter.ToUInt32(random_number, 0);
+            uint buffer = BitConverter.ToUInt32(randomNumber, 0);
 
             return (buffer % offset) + minValue;
         }
 
         public ulong GenerateUlong()
         {
-            byte[] random_number = new byte[8];
-            _Random.GetBytes(random_number);
-            return BitConverter.ToUInt64(random_number, 0);
+            byte[] randomNumber = new byte[8];
+            _Random.GetBytes(randomNumber);
+            return BitConverter.ToUInt64(randomNumber, 0);
         }
 
         public string GeneratePassword(int length)

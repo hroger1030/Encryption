@@ -32,68 +32,68 @@ namespace Encryption
 
         public RsaEncryption() { }
 
-        public bool IsValidKeySize(int key_size)
+        public bool IsValidKeySize(int keySize)
         {
             // from MS:
             // The RSACryptoServiceProvider supports key sizes from 384 bits to 16384 bits in increments of 8 bits 
             // if you have the Microsoft Enhanced Cryptographic Provider installed. It supports key sizes from 384 
             // bits to 512 bits in increments of 8 bits if you have the Microsoft Base Cryptographic Provider installed.
 
-            return (key_size % 8) == 0;
+            return (keySize % 8) == 0;
         }
 
-        public string Encrypt(string text, string public_key, int key_size)
+        public string Encrypt(string text, string publicKey, int keySize)
         {
-            var encrypted = Encrypt(Encoding.UTF8.GetBytes(text), public_key, key_size);
+            var encrypted = Encrypt(Encoding.UTF8.GetBytes(text), publicKey, keySize);
             return Convert.ToBase64String(encrypted);
         }
 
-        public byte[] Encrypt(byte[] data, string public_key, int key_size)
+        public byte[] Encrypt(byte[] data, string publicKey, int keySize)
         {
             if (data == null || data.Length == 0)
                 throw new ArgumentException("Text is null or empty");
 
-            if (string.IsNullOrEmpty(public_key))
+            if (string.IsNullOrEmpty(publicKey))
                 throw new ArgumentException("Public key is null or empty");
 
-            if (!IsValidKeySize(key_size))
+            if (!IsValidKeySize(keySize))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
-            using var provider = new RSACryptoServiceProvider(key_size);
-            provider.FromXmlString(public_key);
+            using var provider = new RSACryptoServiceProvider(keySize);
+            provider.FromXmlString(publicKey);
             return provider.Encrypt(data, true);
         }
 
-        public string DecryptText(string text, string private_key, int key_size)
+        public string DecryptText(string text, string privateKey, int keySize)
         {
-            var decrypted = Decrypt(Convert.FromBase64String(text), private_key, key_size);
+            var decrypted = Decrypt(Convert.FromBase64String(text), privateKey, keySize);
             return Encoding.UTF8.GetString(decrypted);
         }
 
-        public byte[] Decrypt(byte[] data, string private_key, int key_size)
+        public byte[] Decrypt(byte[] data, string privateKey, int keySize)
         {
             if (data == null || data.Length == 0)
                 throw new ArgumentException("Text is null or empty");
 
-            if (string.IsNullOrEmpty(private_key))
+            if (string.IsNullOrEmpty(privateKey))
                 throw new ArgumentException("Private key is null or empty");
 
-            if (!IsValidKeySize(key_size))
+            if (!IsValidKeySize(keySize))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
-            using var provider = new RSACryptoServiceProvider(key_size);
-            provider.FromXmlString(private_key);
+            using var provider = new RSACryptoServiceProvider(keySize);
+            provider.FromXmlString(privateKey);
             return provider.Decrypt(data, true);
         }
 
-        public void GenerateKeys(int key_size, out string public_key, out string private_key)
+        public void GenerateKeys(int keySize, out string publicKey, out string privateKey)
         {
-            if (!IsValidKeySize(key_size))
+            if (!IsValidKeySize(keySize))
                 throw new ArgumentException("Key size must be divisible by 8 bits");
 
-            using var provider = new RSACryptoServiceProvider(key_size);
-            public_key = provider.ToXmlString(false);
-            private_key = provider.ToXmlString(true);
+            using var provider = new RSACryptoServiceProvider(keySize);
+            publicKey = provider.ToXmlString(false);
+            privateKey = provider.ToXmlString(true);
         }
     }
 }

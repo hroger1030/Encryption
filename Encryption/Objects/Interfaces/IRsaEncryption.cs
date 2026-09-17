@@ -20,11 +20,11 @@ namespace Encryption
 {
     public interface IRsaEncryption
     {
-        byte[] Decrypt(byte[] data, string private_key, int key_size);
-        string DecryptText(string text, string private_key, int key_size);
-        string Encrypt(string text, string public_key, int key_size);
-        byte[] Encrypt(byte[] data, string public_key, int key_size);
-        void GenerateKeys(int key_size, out string public_key, out string private_key);
-        bool IsValidKeySize(int key_size);
+        byte[] Decrypt(byte[] data, string privateKey, int keySize);
+        string DecryptText(string text, string privateKey, int keySize);
+        string Encrypt(string text, string publicKey, int keySize);
+        byte[] Encrypt(byte[] data, string publicKey, int keySize);
+        void GenerateKeys(int keySize, out string publicKey, out string privateKey);
+        bool IsValidKeySize(int keySize);
     }
 }

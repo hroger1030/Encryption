@@ -66,9 +66,9 @@ namespace Encryption
             byte[] hash = new byte[_HashSize];
 
             // generate salt
-            using (var crypto_provider = RandomNumberGenerator.Create())
+            using (var cryptoProvider = RandomNumberGenerator.Create())
             {
-                crypto_provider.GetBytes(salt);
+                cryptoProvider.GetBytes(salt);
             }
 
             hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm), _HashSize);
@@ -103,15 +103,15 @@ namespace Encryption
             Array.Copy(buffer, 0, salt, 0, _SaltSize);
 
             // extract old hash
-            byte[] old_hash = new byte[_HashSize];
-            Array.Copy(buffer, _SaltSize, old_hash, 0, _HashSize);
+            byte[] oldHash = new byte[_HashSize];
+            Array.Copy(buffer, _SaltSize, oldHash, 0, _HashSize);
 
             // Compute the hash on the password the user entered
-            byte[] new_hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm), _HashSize);
+            byte[] newHash = Rfc2898DeriveBytes.Pbkdf2(password, salt, _Iterations, new HashAlgorithmName(_HashAlgorithm), _HashSize);
 
             for (int i = 0; i < _HashSize; i++)
             {
-                if (old_hash[i] != new_hash[i])
+                if (oldHash[i] != newHash[i])
                 {
                     return false;
                 }

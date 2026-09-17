@@ -61,7 +61,7 @@ namespace EncryptionUnitTests
         [TestCase(1000, 128)]
         public void AesEncryption_BasicEncryptionWithBytesUsingAesParameters_Passes(int passes, int keySize)
         {
-            var encryptor = new AesEncryption(DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
+            using var encryptor = new AesEncryption(DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
 
             byte[] encrypted = encryptor.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT);
             byte[] decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT);
@@ -95,7 +95,7 @@ namespace EncryptionUnitTests
         [TestCase(1000, 128)]
         public void AesEncryption_BasicEncryptionWithStringsAesParameters_Passes(int passes, int keySize)
         {
-            var encryptor = new AesEncryption(DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
+            using var encryptor = new AesEncryption(DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
 
             string encrypted = encryptor.Encrypt(DEFAULT_TEXT, DEFAULT_PASSWORD, DEFAULT_SALT);
             string decrypted = encryptor.Decrypt(encrypted, DEFAULT_PASSWORD, DEFAULT_SALT);
@@ -286,14 +286,14 @@ namespace EncryptionUnitTests
         [TestCase(1000, 128)]
         public void AesEncryption_TestSaltLengthLongerThanMin_Passes(int passes, int keySize)
         {
-            var encryptor = new AesEncryption();
+            using var encryptor = new AesEncryption();
 
-            string test_salt = encryptor.GenerateSalt();
+            string testSalt = encryptor.GenerateSalt();
 
-            Assert.That((test_salt.Length > SALT_LENGTH), Is.True);
+            Assert.That((testSalt.Length > SALT_LENGTH), Is.True);
 
-            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
-            byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, test_salt, DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
+            byte[] encrypted = AesEncryption.Encrypt(BYTE_TEXT, DEFAULT_PASSWORD, testSalt, DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
+            byte[] decrypted = AesEncryption.Decrypt(encrypted, DEFAULT_PASSWORD, testSalt, DEFAULT_IV, passes, keySize, DEFAULT_HASH_ALGORITHM);
 
             Assert.That((BYTE_TEXT.SequenceEqual(decrypted)), Is.True);
         }
@@ -302,7 +302,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void AesEncryption_DefaultConstructor_RoundTrips()
         {
-            var encryptor = new AesEncryption();
+            using var encryptor = new AesEncryption();
             string salt = encryptor.GenerateSalt();
 
             string encrypted = encryptor.Encrypt(DEFAULT_TEXT, DEFAULT_PASSWORD, salt);
@@ -347,7 +347,7 @@ namespace EncryptionUnitTests
         [TestCase(256)]
         public void AesEncryption_GenerateSaltWithLength_ReturnsRequestedLength(int length)
         {
-            var encryptor = new AesEncryption();
+            using var encryptor = new AesEncryption();
             string salt = encryptor.GenerateSalt(length);
             byte[] saltBytes = Convert.FromBase64String(salt);
 
@@ -358,7 +358,7 @@ namespace EncryptionUnitTests
         [Category("AesEncryption")]
         public void AesEncryption_GenerateSaltWithInvalidLength_Throws()
         {
-            var encryptor = new AesEncryption();
+            using var encryptor = new AesEncryption();
             Assert.Throws<ArgumentException>(() => encryptor.GenerateSalt(0));
         }
 

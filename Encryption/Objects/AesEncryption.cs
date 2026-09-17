@@ -26,7 +26,7 @@ namespace Encryption
     /// <summary>
     /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and decrypt data.
     /// </summary>
-    public sealed class AesEncryption : ISymetricEncryptionProvider
+    public sealed class AesEncryption : ISymetricEncryptionProvider, IDisposable
     {
         private const int DEFAULT_KEY_SIZE = 256;
         private const int BLOCK_SIZE = 128;
@@ -199,9 +199,6 @@ namespace Encryption
                 throw new ArgumentException("Invalid key size, must be 128, 192, or 256 bytes in size");
 
             if (string.IsNullOrWhiteSpace(hashAlgorithm))
-                throw new ArgumentNullException(nameof(hashAlgorithm));
-
-            if (string.IsNullOrWhiteSpace(hashAlgorithm))
                 throw new ArgumentNullException(nameof(hashAlgorithm), "hashAlgorithm is null or empty");
 
             byte[] decryptedBytes = null;
@@ -269,6 +266,11 @@ namespace Encryption
         public static bool IsInitialVectorValid(byte[] initialVector)
         {
             return initialVector.Length == 16;
+        }
+
+        public void Dispose()
+        {
+            _Random?.Dispose();
         }
     }
 }

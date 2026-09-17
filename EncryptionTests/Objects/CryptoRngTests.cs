@@ -25,7 +25,7 @@ using System.Linq;
 namespace EncryptionUnitTests
 {
     [TestFixture]
-    public class CryptoRngTests
+    public class CryptoRngTests : IDisposable
     {
         private const uint MAX_VALUE = 201;
         private const int TRIALS = 10000;
@@ -82,14 +82,14 @@ namespace EncryptionUnitTests
 
             double average = sum / (double)TRIALS;
 
-            double deviation_sum = 0;
+            double deviationSum = 0;
 
             foreach (var kvp in test)
-                deviation_sum += (kvp.Key - average) * (kvp.Key - average);
+                deviationSum += (kvp.Key - average) * (kvp.Key - average);
 
-            double std_deviation = Math.Pow((deviation_sum / (TRIALS - 1)), 0.5);
+            double stdDeviation = Math.Pow((deviationSum / (TRIALS - 1)), 0.5);
 
-            Assert.That((std_deviation > 0.5), Is.True);
+            Assert.That((stdDeviation > 0.5), Is.True);
         }
 
         [Test]
@@ -197,6 +197,11 @@ namespace EncryptionUnitTests
                 Assert.That(password.Length, Is.EqualTo(PASSWORD_LENGTH));
                 Assert.That(password.All(alphabet.Contains), Is.True, $"Password '{password}' contained a character outside the alphabet");
             }
+        }
+
+        public void Dispose()
+        {
+            _Rand?.Dispose();
         }
     }
 }
